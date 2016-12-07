@@ -1,0 +1,29 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="Poker Suite" verbose="1" >
+
+    <test name="Login Test2"   >
+        <parameter name="urs" value="admins"></parameter>
+        <parameter name="yhiju" value="123"></parameter>
+        <parameter name="title" value="Players"></parameter>
+        <classes>
+            <class name="practice4.tests.LoginTests">
+                <methods>
+                    <include name="positiveTest"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+    <test name="Login Test"   >
+        <parameter name="urs" value="admin"></parameter>
+        <parameter name="yhiju" value="123"></parameter>
+        <parameter name="title" value="Players"></parameter>
+        <classes>
+            <class name="practice4.tests.LoginTests">
+                <methods>
+                    <include name="positiveTest"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+</suite>
