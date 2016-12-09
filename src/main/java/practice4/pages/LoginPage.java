@@ -10,7 +10,10 @@ import org.testng.asserts.SoftAssert;
 /**
  * Created by Serhii on 30-Nov-16.
  */
-public class LoginPage {
+public class
+
+
+LoginPage {
 
     @FindBy(id = "username")
     private WebElement usernameInput;
@@ -51,7 +54,7 @@ public class LoginPage {
     }
 
     public void clickOnLogin() {
-        WebElement loginButton = driver.findElement(By.id("logIn")); // Find login button
+        loginButton = driver.findElement(By.id("logIn")); // Find login button
         loginButton.click(); // click on LogIn button
     }
 

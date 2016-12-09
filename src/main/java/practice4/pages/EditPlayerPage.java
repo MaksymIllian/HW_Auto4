@@ -4,11 +4,47 @@ import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
 
 /**
  * Created by Serhii on 30-Nov-16.
  */
 public class EditPlayerPage {
+    @FindBy (id = "ff14642ac1c__us_login")
+    private WebElement usernameElement;
+
+    @FindBy (id = "ff14642ac1c__us_password")
+    private WebElement passwordElement;
+
+    @FindBy (id = "ff14642ac1c__us_email")
+    private WebElement emailElement;
+
+    @FindBy (id = "ff14642ac1c__us_lname")
+    private WebElement lNameElement;
+
+    @FindBy (id = "ff14642ac1c__us_fname")
+    private WebElement fNameElement;
+
+    @FindBy (id = "ff14642ac1c__us_phone")
+    private WebElement phoneElement;
+
+    @FindBy (id = "ff14642ac1c__us_city")
+    private WebElement cityElement;
+
+    @FindBy (id = "ff14642ac1c__us_address")
+    private WebElement addressElement;
+
+    @FindBy (name = "button_save")
+    private WebElement saveButton;
+
+    @FindBy (id = "723a925886__login")
+    private WebElement loginTextBox;
+
+    @FindBy (name = "search")
+    private WebElement searchButton;
+
+    @FindBy (xpath = ".//td/a/img[@alt=\"Delete\"]/parent::a")
+    private WebElement deleteButton;
     WebDriver driver;
     public static final String URL = "http://80.92.229.236:81/Players";
     public EditPlayerPage(WebDriver driver) {
@@ -16,72 +52,64 @@ public class EditPlayerPage {
     }
 
     public void setUserName(String userName) {
-        driver.findElement(By.id("ff14642ac1c__us_login")).sendKeys(userName);
+        usernameElement.sendKeys(userName);
     }
 
     public void setPassword(String password) {
-        driver.findElement(By.id("ff14642ac1c__us_password")).sendKeys(password);
+        passwordElement.sendKeys(password);
     }
 
     public void setConfirmPassword(String password) {
-        driver.findElement(By.id("ff14642ac1c__confirm_password")).sendKeys(password);
+        passwordElement.sendKeys(password);
     }
 
     public void setEMail(String email) {
-        WebElement webElement = driver.findElement(By.id("ff14642ac1c__us_email"));
-        webElement.clear();
-        webElement.sendKeys(email);
+        emailElement.clear();
+        emailElement.sendKeys(email);
     }
 
     public void setFName(String fName) {
 
-        WebElement webElement = driver.findElement(By.id("ff14642ac1c__us_fname"));
-        webElement.clear();
-        webElement.sendKeys(fName);
+        fNameElement.clear();
+        fNameElement.sendKeys(fName);
     }
 
     public void setPhone(String phone) {
-        WebElement webElement = driver.findElement(By.id("ff14642ac1c__us_phone"));
-        webElement.clear();
-        webElement.sendKeys(phone);
+        phoneElement.clear();
+        phoneElement.sendKeys(phone);
 
     }
 
     public void setLName(String lName) {
 
-        WebElement webElement = driver.findElement(By.id("ff14642ac1c__us_lname"));
-        webElement.clear();
-        webElement.sendKeys(lName);
+        lNameElement.clear();
+        lNameElement.sendKeys(lName);
     }
 
     public void setCity(String city) {
 
-        WebElement webElement = driver.findElement(By.id("ff14642ac1c__us_city"));
-        webElement.clear();
-        webElement.sendKeys(city);
+        cityElement.clear();
+        cityElement.sendKeys(city);
     }
 
     public void setAddress(String address) {
-        WebElement webElement = driver.findElement(By.id("ff14642ac1c__us_address"));
-        webElement.clear();
-        webElement.sendKeys(address);
+        addressElement.clear();
+        addressElement.sendKeys(address);
     }
 
     public void save() {
-        driver.findElement(By.name("button_save")).click();
+        saveButton.click();
     }
 
     public void search(String userName) {
-        driver.findElement(By.id("723a925886__login")).clear();
-        driver.findElement(By.id("723a925886__login")).sendKeys(userName);
-        driver.findElement(By.name("search")).click();
+        loginTextBox.clear();
+        loginTextBox.sendKeys(userName);
+        searchButton.click();
     }
 
     public void delete(String userName) {
-        driver.findElement(By.id("723a925886__login")).clear();
-        driver.findElement(By.id("723a925886__login")).sendKeys(userName);
-        driver.findElement(By.name("search")).click();
-        driver.findElement(By.xpath(".//td/a/img[@alt=\"Delete\"]/parent::a")).click();
+        search(userName);
+        deleteButton.click();
         Alert alert = driver.switchTo().alert();
         alert.accept();
     }

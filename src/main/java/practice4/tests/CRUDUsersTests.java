@@ -33,7 +33,7 @@ public class CRUDUsersTests {
     @BeforeTest
     public void beforeTest() {
         driver = new FirefoxDriver();
-        driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         playersPage = new PlayersPage(driver);
         editPlayerPage = new EditPlayerPage(driver);
         loginPage = new LoginPage(driver);
