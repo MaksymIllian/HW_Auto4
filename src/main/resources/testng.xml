@@ -48,9 +48,9 @@
             <class name="practice4.tests.LoginTests">
                 <methods>
                     <include name="negativeTestWrongPassword"/>
-                    <exclude name="positiveTest" />
                 </methods>
             </class>
         </classes>
     </test>
+
 </suite>

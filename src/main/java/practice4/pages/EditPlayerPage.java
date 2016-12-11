@@ -5,6 +5,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
 
 /**
  * Created by Serhii on 30-Nov-16.
@@ -12,6 +13,9 @@ import org.openqa.selenium.support.FindBy;
 public class EditPlayerPage {
     @FindBy (id = "ff14642ac1c__us_login")
     private WebElement usernameElement;
+
+    @FindBy (id = "ff14642ac1c__confirm_password")
+    private WebElement confirmPasswordElement;
 
     @FindBy (id = "ff14642ac1c__us_password")
     private WebElement passwordElement;
@@ -45,10 +49,17 @@ public class EditPlayerPage {
 
     @FindBy (xpath = ".//td/a/img[@alt=\"Delete\"]/parent::a")
     private WebElement deleteButton;
+
+    @FindBy (xpath = ".//td/a/img[@alt=\"Edit\"]/parent::a")
+    private WebElement editButton;
+
+    @FindBy (xpath = ".//div/ul/li[text()=\"Player has been deleted\"]")
+    private WebElement actualMsg;
     WebDriver driver;
     public static final String URL = "http://80.92.229.236:81/Players";
     public EditPlayerPage(WebDriver driver) {
         this.driver = driver;
+        PageFactory.initElements(driver,this);
     }
 
     public void setUserName(String userName) {
@@ -60,7 +71,7 @@ public class EditPlayerPage {
     }
 
     public void setConfirmPassword(String password) {
-        passwordElement.sendKeys(password);
+        confirmPasswordElement.sendKeys(password);
     }
 
     public void setEMail(String email) {
@@ -101,12 +112,19 @@ public class EditPlayerPage {
         saveButton.click();
     }
 
+    public String getActualMsg() {
+        return actualMsg.getText();
+    }
     public void search(String userName) {
         loginTextBox.clear();
         loginTextBox.sendKeys(userName);
         searchButton.click();
     }
 
+    public void edit(String userName) {
+        search(userName);
+        editButton.click();
+    }
     public void delete(String userName) {
         search(userName);
         deleteButton.click();

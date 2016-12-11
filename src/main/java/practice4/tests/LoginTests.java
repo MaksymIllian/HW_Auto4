@@ -28,15 +28,20 @@ public class LoginTests {
     public void beforeTest() {
         driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
-
-
     }
-    /*
+
     @DataProvider
-    public Object[][] loginData() {
+    public Object[][] negativeWrongLoginData() {
         return new Object[][]{
-                {"admin", "123", "Login", "Invalid username or password"},
+                {"admin1", "123", "Login", "Invalid username or password"},
                 {"admins", "123", "Login", "Invalid username or password"}
+        };
+    }
+    @DataProvider
+    public Object[][] negativeWrongPasswordData() {
+        return new Object[][]{
+                {"admin", "123fuck", "Login", "Invalid username or password"},
+                {"admin", "123n", "Login", "Invalid username or password"}
         };
     }
     @DataProvider
@@ -44,16 +49,22 @@ public class LoginTests {
         return new Object[][]{
                 {"admin", "123", "Players"}
         };
-    }*/
+    }
     @BeforeMethod
     public void beforeMethod() {
         loginPage = new LoginPage(driver);
         loginPage.open(); //open poker URL
         softAssert = new SoftAssert();
     }
-
+    @DataProvider
+    public Object[][] negativeEmptyFieldsData() {
+        return new Object[][]{
+                {null, null, "Login", "Value is required and can't be empty"},
+                {null, null, "Login", "Value is required and can't be empty"}
+        };
+    }
     @Parameters({"username","password","title"})
-    @Test
+    @Test(dataProvider = "positiveLoginData")
     public void positiveTest(String username, String password, String title) {
 //        LoginPage loginPage = new LoginPage(driver);
 //        loginPage.open(); //open poker URL
@@ -63,8 +74,8 @@ public class LoginTests {
         softAssert.assertAll();
     }
     @Parameters({"username","password","title", "expectedMsg"})
-    @Test//(dependsOnMethods ="positiveTest")
-    public void negativeTestWrongPasssord(String username, String password, String title, String expectedMsg){
+    @Test(dataProvider = "negativeWrongPasswordData")
+    public void negativeTestWrongPassword(String username, String password, String title, String expectedMsg){
 //        LoginPage loginPage = new LoginPage(driver);
 //        loginPage.open(); //open poker URL
         loginPage.login(username, password);
@@ -76,7 +87,7 @@ public class LoginTests {
     }
 
     @Parameters({"username","password","title", "expectedMsg"})
-    @Test// (dependsOnMethods = "negativeTestWrongPasssord")//(dataProvider = "loginData")
+    @Test(dataProvider = "negativeWrongLoginData")
     public void negativeTestWrongLogin(String username, String password, String title, String expectedMsg) {
         loginPage.login(username,password);
         String actualMsg = loginPage.getErrorMessage();
@@ -87,7 +98,7 @@ public class LoginTests {
     }
 
     @Parameters({"username","password","title", "expectedMsg"})
-    @Test// (dependsOnMethods ="negativeTestWrongLogin")
+    @Test(dataProvider = "negativeEmptyFieldsData")
     public void negativeTestEmptyFields(String username, String password, String title, String expectedMsg) {
         loginPage.login(username,password);
         String actualMsg = loginPage.getErrorMessage();

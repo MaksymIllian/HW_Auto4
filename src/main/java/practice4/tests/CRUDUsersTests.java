@@ -4,9 +4,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.testng.Assert;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
+import org.testng.asserts.SoftAssert;
 import practice4.data.classes.Player;
 import practice4.pages.EditPlayerPage;
 import practice4.pages.LoginPage;
@@ -24,7 +23,7 @@ public class CRUDUsersTests {
     PlayersPage playersPage;
     EditPlayerPage editPlayerPage;
     Player player  = new Player();
-
+    SoftAssert softAssert;
     /**
      * 1. Create browser
      * 2. Manage browser
@@ -34,11 +33,16 @@ public class CRUDUsersTests {
     public void beforeTest() {
         driver = new FirefoxDriver();
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
         playersPage = new PlayersPage(driver);
         editPlayerPage = new EditPlayerPage(driver);
         loginPage = new LoginPage(driver);
     }
 
+    @BeforeMethod
+    public void beforeMethod(){
+        softAssert = new SoftAssert();
+    }
     /**
      * 1. Login: set user name "admin", set password "123"
      * 2. Click on insert button
@@ -47,23 +51,46 @@ public class CRUDUsersTests {
      * 5. Assert current title with expected title "Players"
      * 6. Assert current url with expected "http://80.92.229.236:81/Players"
      */
-    @Test
-    public void createPositiveTest() {
+    @DataProvider
+    public Object[][] createPositiveData() {
+        return new Object[][]{
+                {"admin", "123", player.getUserName(), player.getPassword(), player.getEmail(), player.getfName(),
+                        player.getlName(), player.getPhone(), player.getCity(), player.getAddress(), "Players"}
+        };
+    }
+    @DataProvider
+    public Object[][] editPositiveData() {
+        return new Object[][]{
+                {"admin", "123", player.getUserName(), "Players", player.getlName(), player.getfName(), player.getAddress()}
+        };
+    }
+    @DataProvider
+    public Object[][] deletePositiveData() {
+        return new Object[][]{
+                {"admin", "123", player.getUserName(), "Players", "Player has been deleted"}
+        };
+    }
+
+    @Test (dataProvider = "createPositiveData")
+    public void createPositiveTest(String login, String password, String playerName, String playerPassword,
+                                   String email, String fName, String lName, String phone, String city,
+                                   String address, String title) {
         loginPage.open();
-        loginPage.login("admin","123");
+        loginPage.login(login, password);
         playersPage.insertPlayer();
-        editPlayerPage.setUserName(player.getUserName());
-        editPlayerPage.setPassword(player.getPassword());
-        editPlayerPage.setConfirmPassword(player.getPassword());
-        editPlayerPage.setEMail(player.getEmail());
-        editPlayerPage.setFName(player.getfName());
-        editPlayerPage.setLName(player.getlName());
-        editPlayerPage.setPhone(player.getPhone());
-        editPlayerPage.setCity(player.getCity());
-        editPlayerPage.setAddress(player.getAddress());
+        editPlayerPage.setUserName(playerName);
+        editPlayerPage.setPassword(playerPassword);
+        editPlayerPage.setConfirmPassword(playerPassword);
+        editPlayerPage.setEMail(email);
+        editPlayerPage.setFName(fName);
+        editPlayerPage.setLName(lName);
+        editPlayerPage.setPhone(phone);
+        editPlayerPage.setCity(city);
+        editPlayerPage.setAddress(address);
         editPlayerPage.save();
-        Assert.assertEquals(driver.getTitle(), "Players", "Wrong title after create");
-        Assert.assertNotEquals(driver.getCurrentUrl(), EditPlayerPage.URL, "You are still on edit page.");
+        softAssert.assertEquals(driver.getTitle(), title, "Wrong title after create");
+        softAssert.assertNotEquals(driver.getCurrentUrl(), EditPlayerPage.URL, "You are still on edit page.");
+        softAssert.assertAll();
     }
     /**
      * 1. Login: set user name "admin", set password "123"
@@ -75,20 +102,19 @@ public class CRUDUsersTests {
      * 7. Assert current title with expected title "Players"
      * 8. Assert current url with expected "http://80.92.229.236:81/Players"
      */
-    @Test(dependsOnMethods = { "createPositiveTest" })
-    public void editPositiveTest() {
-        loginPage.open();
-        loginPage.login("admin","123");
-        driver.findElement(By.id("723a925886__login")).clear();
-        driver.findElement(By.id("723a925886__login")).sendKeys(player.getUserName());
-        driver.findElement(By.name("search")).click();
-        driver.findElement(By.xpath(".//td/a/img[@alt=\"Edit\"]/parent::a")).click();
-        editPlayerPage.setFName(player.getlName());
-        editPlayerPage.setLName(player.getfName());
-        editPlayerPage.setAddress(player.getAddress());
+    @Test(dependsOnMethods = { "createPositiveTest" }, dataProvider = "editPositiveData")
+    public void editPositiveTest(String login, String password, String playerName, String title,
+                                 String editFName, String editLName, String editAddress) {
+      //  loginPage.open();
+      //  loginPage.login(login,password);
+        editPlayerPage.edit(playerName);
+        editPlayerPage.setFName(editFName);
+        editPlayerPage.setLName(editLName);
+        editPlayerPage.setAddress(editAddress);
         editPlayerPage.save();
-        Assert.assertEquals(driver.getTitle(), "Players", "Wrong title after edit");
-        Assert.assertNotEquals(driver.getCurrentUrl(), EditPlayerPage.URL, "You are still on edit page.");
+        softAssert.assertEquals(driver.getTitle(), title, "Wrong title after edit");
+        softAssert.assertNotEquals(driver.getCurrentUrl(), EditPlayerPage.URL, "You are still on edit page.");
+        softAssert.assertAll();
     }
     /**
      * 1. Login: set user name "admin", set password "123"
@@ -99,15 +125,15 @@ public class CRUDUsersTests {
      * 7. Assert current title with expected title "Players"
      * 8. Assert current url with expected "http://80.92.229.236:81/Players"
      */
-    @Test (dependsOnMethods = { "editPositiveTest" })
-    public void deletePositiveTest() {
-        loginPage.open();
-        loginPage.login("admin","123");
-        editPlayerPage.delete(player.getUserName());
-        String expectedMessege = "Player has been deleted";
-        String actualMessege = driver.findElement(By.xpath(".//div/ul/li[text()=\"Player has been deleted\"]")).getText();
-        Assert.assertEquals(driver.getTitle(), "Players", "Wrong title after delete");
-        Assert.assertEquals(expectedMessege, actualMessege, "Player has not been deleted.");
+    @Test (dependsOnMethods = { "editPositiveTest" }, dataProvider = "deletePositiveData")
+    public void deletePositiveTest(String login, String password, String playerName, String title, String expectedMsg) {
+     //   loginPage.open();
+     //   loginPage.login(login, password);
+        editPlayerPage.delete(playerName);
+        String actualMsg = editPlayerPage.getActualMsg();
+        softAssert.assertEquals(driver.getTitle(), title, "Wrong title after delete");
+        softAssert.assertEquals(actualMsg, expectedMsg ,"Player has not been deleted.");
+        softAssert.assertAll();
     }
 
 
