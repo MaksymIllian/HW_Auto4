@@ -1,0 +1,56 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="Login Suite" verbose="1" >
+    <test name="Login Test Positive"   >
+        <parameter name="username" value="admin"></parameter>
+        <parameter name="password" value="123"></parameter>
+        <parameter name="title" value="Players"></parameter>
+        <classes>
+            <class name="practice4.tests.LoginTests">
+                <methods>
+                    <include name="positiveTest"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+    <test name="Negative Test Empty Fields"   >
+        <parameter name="username" value=""></parameter>
+        <parameter name="password" value=""></parameter>
+        <parameter name="title" value="Login"></parameter>
+        <parameter name="expectedMsg" value="Value is required and can't be empty"></parameter>
+        <classes>
+            <class name="practice4.tests.LoginTests">
+                <methods>
+                    <include name="negativeTestEmptyFields"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+    <test name="Negative Test Wrong Login"   >
+        <parameter name="username" value="admins"></parameter>
+        <parameter name="password" value="123"></parameter>
+        <parameter name="title" value="Login"></parameter>
+        <parameter name="expectedMsg" value="Invalid username or password"></parameter>
+        <classes>
+            <class name="practice4.tests.LoginTests">
+                <methods>
+                    <include name="negativeTestWrongLogin"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+    <test name="Negative Test Wrong Password"   >
+        <parameter name="username" value="admin"></parameter>
+        <parameter name="password" value="123fuck"></parameter>
+        <parameter name="title" value="Login"></parameter>
+        <parameter name="expectedMsg" value="Invalid username or password"></parameter>
+        <classes>
+            <class name="practice4.tests.LoginTests">
+                <methods>
+                    <include name="negativeTestWrongPassword"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+
+</suite>
